@@ -1,5 +1,10 @@
 
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+let game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
+    preload: preload,
+    create: create,
+    update: update,
+    render: render
+});
 
 function preload() {
 
@@ -11,17 +16,26 @@ function preload() {
     game.load.image('starBig', 'assets/star2.png');
     game.load.image('background', 'assets/background2.png');
 
+    // load audio files
+    game.load.audio('jump', 'assets/audio/sfx/jump.wav');
+    game.load.audio('land', 'assets/audio/sfx/land.wav');
+    game.load.audio('walk', 'assets/audio/sfx/walk.wav');
+
 }
 
-var map;
-var tileset;
-var layer;
-var player;
-var facing = 'left';
-var jumpTimer = 0;
-var cursors;
-var jumpButton;
-var bg;
+let map;
+let tileset;
+let layer;
+let player;
+let facing = 'left';
+let jumpTimer = 0;
+let cursors;
+let jumpButton;
+let bg;
+let playerSpeed = 400;
+let airborne = false;
+let airbornePeak;
+let sounds = {};
 
 function create() {
 
@@ -32,6 +46,11 @@ function create() {
     bg = game.add.tileSprite(0, 0, 800, 600, 'background');
     bg.fixedToCamera = true;
 
+    // init audio
+    sounds.jump = game.add.audio('jump', 0.7);
+    sounds.land = game.add.audio('land');
+    sounds.walk = game.add.audio('walk', 0.4);
+
     map = game.add.tilemap('level1');
 
     map.addTilesetImage('tiles-1');
@@ -39,14 +58,14 @@ function create() {
     map.setCollisionByExclusion([ 13, 14, 15, 16, 46, 47, 48, 49, 50, 51 ]);
 
     layer = map.createLayer('Tile Layer 1');
-    objectLayer = map.createLayer('Object Layer 1');
+    // objectLayer = map.createLayer('Object Layer 1');
 
     //  Un-comment this on to see the collision tiles
     // layer.debug = true;
 
     layer.resizeWorld();
 
-    game.physics.arcade.gravity.y = 950;
+    game.physics.arcade.gravity.y = 1400;
 
     player = game.add.sprite(32, 32, 'dude');
     game.physics.enable(player, Phaser.Physics.ARCADE);
@@ -72,38 +91,32 @@ function update() {
 
     player.body.velocity.x = 0;
 
-    if (cursors.left.isDown)
-    {
-        player.body.velocity.x = -350;
+    if (cursors.left.isDown) {
+        player.body.velocity.x = -playerSpeed;
+        player.body.onFloor() && !sounds.walk.isPlaying && sounds.walk.play();
 
-        if (facing != 'left')
-        {
+        if (facing != 'left') {
             player.animations.play('left');
             facing = 'left';
         }
     }
-    else if (cursors.right.isDown)
-    {
-        player.body.velocity.x = 350;
+    else if (cursors.right.isDown) {
+        player.body.velocity.x = playerSpeed;
+        player.body.onFloor() && !sounds.walk.isPlaying && sounds.walk.play();
 
-        if (facing != 'right')
-        {
+        if (facing != 'right') {
             player.animations.play('right');
             facing = 'right';
         }
     }
-    else
-    {
-        if (facing != 'idle')
-        {
+    else {
+        if (facing != 'idle') {
             player.animations.stop();
 
-            if (facing == 'left')
-            {
+            if (facing == 'left') {
                 player.frame = 0;
             }
-            else
-            {
+            else {
                 player.frame = 5;
             }
 
@@ -111,10 +124,29 @@ function update() {
         }
     }
 
-    if (jumpButton.isDown && player.body.onFloor() && game.time.now > jumpTimer)
-    {
+    if (airborne) {
+        if (player.position.y < airbornePeak.y) {
+            // jump reached new heights!
+            airbornePeak = player.position.clone();
+        }
+        if (player.body.onFloor()) {
+            // just landed
+            airborne = false;
+            let fallDistance = Math.abs(airbornePeak.y - player.position.y);
+            let volume = Math.min(1, fallDistance / 150);
+            sounds.land.play(null, null, volume);
+        }
+    }
+
+    if (jumpButton.isDown && player.body.onFloor() && game.time.now > jumpTimer) {
         player.body.velocity.y = -550;
         jumpTimer = game.time.now + 750;
+        sounds.jump.play();
+    }
+
+    if (!airborne && !player.body.onFloor()) {
+        airborne = true;
+        airbornePeak = player.position.clone();
     }
 
 }
