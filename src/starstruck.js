@@ -281,5 +281,7 @@ function killPlayer() {
     player.body.checkCollision.none = true; // don't collide with other sprites
     player.body.collideWorldBounds = false; // don't collide with world boundaries
     player.body.velocity.y = -500; // go up
+    player.scale.y = -1;
+    player.anchor.setTo(0, 0);
     sounds.playerDeath.play();
 }
