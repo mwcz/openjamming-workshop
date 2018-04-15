@@ -29,6 +29,12 @@ function preload() {
     // https://www.beepbox.co/#5n11s0k4l00e00t7m0a2g00j0i0r1w11f00d13c00h00v03o30bMp16kg0aiE
     game.load.audio('walk', 'assets/audio/sfx/walk.wav');
 
+    // https://www.beepbox.co/#5n31s0k4l00e00t7m0a2g00j0i0r1w1181f0000d1111c0000h0000v0000o3210bYp1dIYOGwqCf5IBuc
+    game.load.audio('player-death', 'assets/audio/sfx/player-death.wav');
+
+    // https://www.beepbox.co/#5n31s0k4l00e00t7m0a2g00j0i0r1w1181f0000d1111c0000h0000v0000o3210bYp165A81pk
+    game.load.audio('enemy-death', 'assets/audio/sfx/enemy-death.wav');
+
 }
 
 let map;
@@ -62,15 +68,17 @@ function create() {
     sounds.jump = game.add.audio('jump', 0.7);
     sounds.land = game.add.audio('land');
     sounds.walk = game.add.audio('walk', 0.8);
+    sounds.playerDeath = game.add.audio('player-death', 0.8);
+    sounds.enemyDeath = game.add.audio('enemy-death', 0.8);
 
     map = game.add.tilemap('level1');
+
+    console.log(map);
 
     map.addTilesetImage('tiles-1');
     map.addTilesetImage('map-tiles');
 
-    // map.setCollisionByExclusion([ 13, 14, 15, 16, 46, 47, 48, 49, 50, 51 ]);
-
-    map.setCollisionByExclusion([ 12, 13, 14, 15, 16, 46, 47, 48, 49, 50].map(id => id+1)); // add 1 to each listed id, so the array literal matches what we see in Tiled
+    map.setCollisionByExclusion([]); // add 1 to each listed id, so the array literal matches what we see in Tiled
 
     layer = map.createLayer('platforms');
 
@@ -181,9 +189,9 @@ function update() {
         }
     }
 
-    if (jumpButton.isDown && player.body.onFloor()/* && game.time.now > jumpTimer*/) {
+    if (jumpButton.isDown && player.body.onFloor() && game.time.now > jumpTimer) {
         player.body.velocity.y = -550;
-        // jumpTimer = game.time.now + 750;
+        jumpTimer = game.time.now + 100;
         sounds.jump.play();
     }
 
@@ -265,6 +273,7 @@ function killEnemy(enemySprite) {
     deathTween.start();
 
     player.body.velocity.y = -300; // bounce player
+    sounds.enemyDeath.play();
 }
 
 function killPlayer() {
@@ -272,4 +281,5 @@ function killPlayer() {
     player.body.checkCollision.none = true; // don't collide with other sprites
     player.body.collideWorldBounds = false; // don't collide with world boundaries
     player.body.velocity.y = -500; // go up
+    sounds.playerDeath.play();
 }
