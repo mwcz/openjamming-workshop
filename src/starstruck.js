@@ -73,8 +73,6 @@ function create() {
 
     map = game.add.tilemap('level1');
 
-    console.log(map);
-
     map.addTilesetImage('tiles-1');
     map.addTilesetImage('map-tiles');
 
@@ -103,27 +101,6 @@ function create() {
     playButton.onInputOut.add(out, this);
     playButton.onInputUp.add(up, this);
 
-}
-
-function up() {
-    console.log('button up', arguments);
-}
-
-function over() {
-    console.log('button over');
-}
-
-function out() {
-    console.log('button out');
-}
-
-function actionOnClick () {
-
-    console.log('button clicked');
-
-    gameStart = true;
-
-    playButton.visible = false;
 }
 
 function update() {
@@ -217,11 +194,11 @@ function initializeCharacters(map) {
     map.objects.characters.forEach(character => {
         switch (character.type) {
             case 'player':
-                console.log(`create player at ${character.x},${character.y}`);
+                console.log(`creating player at ${character.x},${character.y}`);
                 createPlayer(character);
                 break;
             case 'enemy':
-                console.log(`create an enemy at ${character.x},${character.y}`);
+                console.log(`creatin an enemy at ${character.x},${character.y}`);
                 createEnemy(character);
                 break;
         }
@@ -285,3 +262,25 @@ function killPlayer() {
     player.anchor.setTo(0, 0.5);
     sounds.playerDeath.play();
 }
+
+function up() {
+    console.log('button up', arguments);
+}
+
+function over() {
+    console.log('button over');
+}
+
+function out() {
+    console.log('button out');
+}
+
+function actionOnClick () {
+
+    console.log('button clicked');
+
+    gameStart = true;
+
+    playButton.visible = false;
+}
+
