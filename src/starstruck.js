@@ -9,10 +9,7 @@ let game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
 function preload() {
 
     game.load.tilemap('level1', 'assets/levels/level1.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('tiles-1', 'assets/images/tiles-1.png');
     game.load.image('map-tiles', 'assets/images/map-tiles.png');
-    game.load.image('starSmall', 'assets/images/star.png');
-    game.load.image('starBig', 'assets/images/star2.png');
     game.load.image('background', 'assets/images/background.png');
     game.load.spritesheet('dude', 'assets/images/dude.png', 32, 48);
     game.load.spritesheet('droid', 'assets/images/droid.png', 32, 32);
@@ -115,40 +112,42 @@ function update() {
     enemies.callAll('animations.play', 'animations', 'move');
     enemies.forEach(enemy => {
         let enemyDirection = Math.sign(player.body.position.x - enemy.body.position.x);
-        enemy.body.velocity.x = enemySpeed * enemyDirection;
+        enemy.body.velocity.x = enemy.data.speed * enemyDirection;
         enemy.scale.x = -enemyDirection;
     });
 
-    if (cursors.left.isDown) {
-        player.body.velocity.x = -playerSpeed;
-        player.body.onFloor() && !sounds.walk.isPlaying && sounds.walk.play();
+    if (!player.data.dying) {
+        if (cursors.left.isDown) {
+            player.body.velocity.x = -playerSpeed;
+            player.body.onFloor() && !sounds.walk.isPlaying && sounds.walk.play();
 
-        if (facing != 'left') {
-            player.animations.play('left');
-            facing = 'left';
-        }
-    }
-    else if (cursors.right.isDown) {
-        player.body.velocity.x = playerSpeed;
-        player.body.onFloor() && !sounds.walk.isPlaying && sounds.walk.play();
-
-        if (facing != 'right') {
-            player.animations.play('right');
-            facing = 'right';
-        }
-    }
-    else {
-        if (facing != 'idle') {
-            player.animations.stop();
-
-            if (facing == 'left') {
-                player.frame = 0;
+            if (facing != 'left') {
+                player.animations.play('left');
+                facing = 'left';
             }
-            else {
-                player.frame = 5;
-            }
+        }
+        else if (cursors.right.isDown) {
+            player.body.velocity.x = playerSpeed;
+            player.body.onFloor() && !sounds.walk.isPlaying && sounds.walk.play();
 
-            facing = 'idle';
+            if (facing != 'right') {
+                player.animations.play('right');
+                facing = 'right';
+            }
+        }
+        else {
+            if (facing != 'idle') {
+                player.animations.stop();
+
+                if (facing == 'left') {
+                    player.frame = 0;
+                }
+                else {
+                    player.frame = 5;
+                }
+
+                facing = 'idle';
+            }
         }
     }
 
@@ -183,10 +182,8 @@ function render () {
 
     // game.debug.text(game.time.physicsElapsed, 32, 32);
     // game.debug.body(player);
-    // game.debug.body(enemy);
+    // enemies.forEach(enemy => game.debug.body(enemy));
     // game.debug.bodyInfo(player, 16, 24);
-    // game.debug.bodyInfo(enemy, 16, 24);
-
 
 }
 
@@ -224,10 +221,11 @@ function createPlayer(character) {
 
 function createEnemy(character) {
     let enemy = enemies.create(character.x, character.y, 'droid');
+    enemy.data = character.properties;
     game.physics.enable(enemy, Phaser.Physics.ARCADE);
     enemy.body.collideWorldBounds = true;
-    // enemy.body.setSize(20, 32, 5, 16);
     enemy.anchor.setTo(0.5, 1);
+    enemy.body.setSize(22, 20, 5, 14);
 
     enemy.animations.add('move', [0, 1, 2, 3], 10, true);
 }
@@ -246,7 +244,7 @@ function killEnemy(enemySprite) {
 
     const deathTween = game.add.tween(enemySprite);
     deathTween.to({ y: enemySprite.y + 60, alpha: 0 }, 0.4 * Phaser.Timer.SECOND, Phaser.Easing.Linear.None);
-    deathTween.onComplete.add(() => enemySprite.kill(), this);
+    deathTween.onComplete.add(() => enemySprite.destroy(), this);
     deathTween.start();
 
     player.body.velocity.y = -300; // bounce player
