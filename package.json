@@ -10,8 +10,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "npm run serve",
-    "serve":
-      "./node_modules/.bin/browser-sync start --server --serveStatic src/ --files 'src/**/*' --directory",
+    "serve": "./node_modules/.bin/browser-sync start --server --serveStatic src/ --files 'src/**/*' --directory",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -33,7 +33,7 @@ let map;
 let tileset;
 let layer;
 let player;
-let enemy;
+let enemies;
 let facing = 'left';
 let enemySpeed = 70;
 let jumpTimer = 0;
@@ -57,7 +57,7 @@ function create() {
     // init audio
     sounds.jump = game.add.audio('jump', 0.7);
     sounds.land = game.add.audio('land');
-    sounds.walk = game.add.audio('walk', 0.4);
+    sounds.walk = game.add.audio('walk', 0.8);
 
     map = game.add.tilemap('level1');
 
@@ -67,36 +67,18 @@ function create() {
 
     map.setCollisionByExclusion([ 12, 13, 14, 15, 16, 46, 47, 48, 49, 50].map(id => id+1)); // add 1 to each listed id, so the array literal matches what we see in Tiled
 
-    layer = map.createLayer('Tile Layer 1');
-    // objectLayer = map.createLayer('Object Layer 1');
+    layer = map.createLayer('platforms');
 
     //  Un-comment this to see the collision tiles
     // layer.debug = true;
 
     layer.resizeWorld();
 
+    enemies = game.add.group();
+
+    initializeCharacters(map);
+
     game.physics.arcade.gravity.y = 1400;
-
-    player = game.add.sprite(32, 32, 'dude');
-    game.physics.enable(player, Phaser.Physics.ARCADE);
-
-    player.body.bounce.y = 0.0;
-    player.body.collideWorldBounds = true;
-    player.body.setSize(20, 32, 5, 16);
-
-    player.animations.add('left', [0, 1, 2, 3], 10, true);
-    player.animations.add('turn', [4], 20, true);
-    player.animations.add('right', [5, 6, 7, 8], 10, true);
-
-    enemy = game.add.sprite(200, 32, 'droid');
-    game.physics.enable(enemy, Phaser.Physics.ARCADE);
-    enemy.body.collideWorldBounds = true;
-    // enemy.body.setSize(20, 32, 5, 16);
-    enemy.anchor.setTo(0.5, 0.5);
-
-    enemy.animations.add('move', [0, 1, 2, 3], 10, true);
-
-    game.camera.follow(player);
 
     cursors = game.input.keyboard.createCursorKeys();
     jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -105,15 +87,18 @@ function create() {
 
 function update() {
 
-    game.physics.arcade.collide([player, enemy], layer);
-    game.physics.arcade.collide(player, enemy, handlePlayerHitEnemy);
+    game.physics.arcade.collide(player, layer, null, () => !player.data.dying);
+    game.physics.arcade.collide(enemies, layer);
+    game.physics.arcade.collide(player, enemies, handlePlayerHitEnemy);
 
     player.body.velocity.x = 0;
 
-    enemy.animations.play('move');
-    let enemyDirection = Math.sign(player.body.position.x - enemy.body.position.x);
-    enemy.body.velocity.x = enemySpeed * enemyDirection;
-    enemy.scale.x = -enemyDirection;
+    enemies.callAll('animations.play', 'animations', 'move');
+    enemies.forEach(enemy => {
+        let enemyDirection = Math.sign(player.body.position.x - enemy.body.position.x);
+        enemy.body.velocity.x = enemySpeed * enemyDirection;
+        enemy.scale.x = -enemyDirection;
+    });
 
     if (cursors.left.isDown) {
         player.body.velocity.x = -playerSpeed;
@@ -162,9 +147,9 @@ function update() {
         }
     }
 
-    if (jumpButton.isDown && player.body.onFloor() && game.time.now > jumpTimer) {
+    if (jumpButton.isDown && player.body.onFloor()/* && game.time.now > jumpTimer*/) {
         player.body.velocity.y = -550;
-        jumpTimer = game.time.now + 750;
+        // jumpTimer = game.time.now + 750;
         sounds.jump.play();
     }
 
@@ -186,11 +171,71 @@ function render () {
 
 }
 
+function initializeCharacters(map) {
+    map.objects.characters.forEach(character => {
+        switch (character.type) {
+            case 'player':
+                console.log(`create player at ${character.x},${character.y}`);
+                createPlayer(character);
+                break;
+            case 'enemy':
+                console.log(`create an enemy at ${character.x},${character.y}`);
+                createEnemy(character);
+                break;
+        }
+    });
+}
+
+function createPlayer(character) {
+    player = game.add.sprite(character.x, character.y, 'dude');
+    player.anchor.setTo(0, 1);
+
+    game.physics.enable(player, Phaser.Physics.ARCADE);
+
+    player.body.bounce.y = 0.0;
+    player.body.collideWorldBounds = true;
+    player.body.setSize(20, 32, 5, 16);
+
+    player.animations.add('left', [0, 1, 2, 3], 10, true);
+    player.animations.add('turn', [4], 20, true);
+    player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+    game.camera.follow(player);
+}
+
+function createEnemy(character) {
+    let enemy = enemies.create(character.x, character.y, 'droid');
+    game.physics.enable(enemy, Phaser.Physics.ARCADE);
+    enemy.body.collideWorldBounds = true;
+    // enemy.body.setSize(20, 32, 5, 16);
+    enemy.anchor.setTo(0.5, 1);
+
+    enemy.animations.add('move', [0, 1, 2, 3], 10, true);
+}
+
 function handlePlayerHitEnemy(player, enemy) {
     if (player.body.touching.down) {
-        enemy.kill();
+        killEnemy(enemy);
     }
     else {
-        player.kill()
+        killPlayer();
     }
+}
+
+function killEnemy(enemySprite) {
+    enemySprite.body.enable = false;
+
+    const deathTween = game.add.tween(enemySprite);
+    deathTween.to({ y: enemySprite.y + 60, alpha: 0 }, 0.4 * Phaser.Timer.SECOND, Phaser.Easing.Linear.None);
+    deathTween.onComplete.add(() => enemySprite.kill(), this);
+    deathTween.start();
+
+    player.body.velocity.y = -300; // bounce player
+}
+
+function killPlayer() {
+    player.data.dying = true;
+    player.body.checkCollision.none = true; // don't collide with other sprites
+    player.body.collideWorldBounds = false; // don't collide with world boundaries
+    player.body.velocity.y = -500; // go up
 }
