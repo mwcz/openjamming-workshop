@@ -8,15 +8,15 @@ let game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
 
 function preload() {
 
-    game.load.tilemap('level1', 'assets/level1.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('tiles-1', 'assets/tiles-1.png');
-    game.load.image('map-tiles', 'assets/map-tiles.png');
-    game.load.image('starSmall', 'assets/star.png');
-    game.load.image('starBig', 'assets/star2.png');
-    game.load.image('background', 'assets/background2.png');
-    game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
-    game.load.spritesheet('droid', 'assets/droid.png', 32, 32);
-    game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
+    game.load.tilemap('level1', 'assets/levels/level1.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.image('tiles-1', 'assets/images/tiles-1.png');
+    game.load.image('map-tiles', 'assets/images/map-tiles.png');
+    game.load.image('starSmall', 'assets/images/star.png');
+    game.load.image('starBig', 'assets/images/star2.png');
+    game.load.image('background', 'assets/images/background.png');
+    game.load.spritesheet('dude', 'assets/images/dude.png', 32, 48);
+    game.load.spritesheet('droid', 'assets/images/droid.png', 32, 32);
+    game.load.spritesheet('button', 'assets/images/button_sprite_sheet.png', 193, 71);
 
     // load audio files
 
