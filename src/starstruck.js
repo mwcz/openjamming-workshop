@@ -10,6 +10,7 @@ function preload() {
 
     game.load.tilemap('level1', 'assets/level1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('tiles-1', 'assets/tiles-1.png');
+    game.load.image('map-tiles', 'assets/map-tiles.png');
     game.load.image('starSmall', 'assets/star.png');
     game.load.image('starBig', 'assets/star2.png');
     game.load.image('background', 'assets/background2.png');
@@ -62,6 +63,7 @@ function create() {
     map = game.add.tilemap('level1');
 
     map.addTilesetImage('tiles-1');
+    map.addTilesetImage('map-tiles');
 
     // map.setCollisionByExclusion([ 13, 14, 15, 16, 46, 47, 48, 49, 50, 51 ]);
 
