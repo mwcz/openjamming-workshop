@@ -16,6 +16,7 @@ function preload() {
     game.load.image('background', 'assets/background2.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.spritesheet('droid', 'assets/droid.png', 32, 32);
+    game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
 
     // load audio files
 
@@ -45,6 +46,8 @@ let playerSpeed = 400;
 let airborne = false;
 let airbornePeak;
 let sounds = {};
+let gameStart = false;
+let playButton;
 
 function create() {
 
@@ -85,15 +88,44 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
     jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
+
+    playButton = game.add.button(300, 900, 'button', actionOnClick, this, 2, 1, 0);
+
+    playButton.onInputOver.add(over, this);
+    playButton.onInputOut.add(out, this);
+    playButton.onInputUp.add(up, this);
+
+}
+
+function up() {
+    console.log('button up', arguments);
+}
+
+function over() {
+    console.log('button over');
+}
+
+function out() {
+    console.log('button out');
+}
+
+function actionOnClick () {
+
+    console.log('button clicked');
+
+    gameStart = true;
+
+    playButton.visible = false;
 }
 
 function update() {
-
     game.physics.arcade.collide(player, layer, null, () => !player.data.dying);
     game.physics.arcade.collide(enemies, layer);
     game.physics.arcade.collide(player, enemies, handlePlayerHitEnemy);
 
     player.body.velocity.x = 0;
+
+    if (!gameStart) return;
 
     enemies.callAll('animations.play', 'animations', 'move');
     enemies.forEach(enemy => {
