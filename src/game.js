@@ -1,4 +1,3 @@
-
 let game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
     preload: preload,
     create: create,
@@ -39,7 +38,6 @@ let layer;
 let player;
 let enemies;
 let facing = 'left';
-let enemySpeed = 70;
 let jumpTimer = 0;
 let cursors;
 let jumpButton;
