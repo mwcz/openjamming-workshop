@@ -10,6 +10,7 @@ A hands-on workshop on open source game development tools.
 
 ### Web tools
 
+ - [Piskel, spritesheets] (https://www.piskelapp.com/)
  - [beepbox, chiptune composer](https://www.beepbox.co/)
  - [jsfxr, sound effect generator](http://github.grumdrig.com/jsfxr/)
 
