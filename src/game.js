@@ -8,7 +8,7 @@ let game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
 
 function preload() {
 
-    game.load.tilemap('level1', 'assets/levels/level1.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('level', 'assets/levels/level.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('map-tiles', 'assets/images/map-tiles.png');
     game.load.image('background', 'assets/images/background.png');
     game.load.spritesheet('dude', 'assets/images/dude.png', 32, 48);
@@ -65,7 +65,7 @@ function create() {
     sounds.playerDeath = game.add.audio('player-death', 0.8);
     sounds.enemyDeath = game.add.audio('enemy-death', 0.8);
 
-    map = game.add.tilemap('level1');
+    map = game.add.tilemap('level');
 
     map.addTilesetImage('map-tiles');
 
