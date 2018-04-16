@@ -9,7 +9,7 @@
 1       function preload() {
 
 3           game.load.tilemap('level', 'assets/levels/level.json', null, Phaser.Tilemap.TILED_JSON);
-10          game.load.image('map-tiles', 'assets/images/map-tiles.png');
+4           game.load.image('map-tiles', 'assets/images/map-tiles.png');
 1           game.load.image('background', 'assets/images/background.png');
 1           game.load.spritesheet('dude', 'assets/images/dude.png', 32, 48);
 4           game.load.spritesheet('droid', 'assets/images/droid.png', 32, 32);
@@ -44,8 +44,8 @@
 7       let jumpButton;
 1       let bg;
 7       let playerSpeed = 400;
-7       let airborne = false;
-7       let airbornePeak;
+9       let airborne = false;
+9       let airbornePeak;
 9       let sounds = {};
 
 1       function create() {
@@ -66,7 +66,7 @@
 
 3           map = game.add.tilemap('level');
 
-10          map.addTilesetImage('map-tiles');
+4           map.addTilesetImage('map-tiles');
 
 10          map.setCollisionByExclusion([]);
 
@@ -105,7 +105,7 @@
 8           if (!player.data.dying) {
 7               if (cursors.left.isDown) {
 7                   player.body.velocity.x = -playerSpeed;
-7                   player.body.onFloor() && !sounds.walk.isPlaying && sounds.walk.play();
+9                   player.body.onFloor() && !sounds.walk.isPlaying && sounds.walk.play();
 
 7                   if (facing != 'left') {
 7                       player.animations.play('left');
@@ -114,7 +114,7 @@
 7               }
 7               else if (cursors.right.isDown) {
 7                   player.body.velocity.x = playerSpeed;
-7                   player.body.onFloor() && !sounds.walk.isPlaying && sounds.walk.play();
+9                   player.body.onFloor() && !sounds.walk.isPlaying && sounds.walk.play();
 
 7                   if (facing != 'right') {
 7                       player.animations.play('right');
@@ -137,30 +137,30 @@
 7               }
 8           }
 
-7           if (airborne) {
-7               if (player.position.y < airbornePeak.y) {
-7                   // jump reached new heights!
-7                   airbornePeak = player.position.clone();
-7               }
-7               if (player.body.onFloor()) {
-7                   // just landed
-7                   airborne = false;
-7                   let fallDistance = Math.abs(airbornePeak.y - player.position.y);
-7                   let volume = Math.min(1, fallDistance / 150);
-7                   sounds.land.play(null, null, volume);
-7               }
-7           }
+9           if (airborne) {
+9               if (player.position.y < airbornePeak.y) {
+9                   // jump reached new heights!
+9                   airbornePeak = player.position.clone();
+9               }
+9               if (player.body.onFloor()) {
+9                   // just landed
+9                   airborne = false;
+9                   let fallDistance = Math.abs(airbornePeak.y - player.position.y);
+9                   let volume = Math.min(1, fallDistance / 150);
+9                   sounds.land.play(null, null, volume);
+9               }
+9           }
 
 7           if (jumpButton.isDown && player.body.onFloor() && game.time.now > jumpTimer) {
 7               player.body.velocity.y = -550;
 7               jumpTimer = game.time.now + 100;
-7               sounds.jump.play();
+9               sounds.jump.play();
 7           }
 
-7           if (!airborne && !player.body.onFloor()) {
-7               airborne = true;
-7               airbornePeak = player.position.clone();
-7           }
+9           if (!airborne && !player.body.onFloor()) {
+9               airborne = true;
+9               airbornePeak = player.position.clone();
+9           }
 
 1       }
 
@@ -191,16 +191,14 @@
 4       function createPlayer(character) {
 1           player = game.add.sprite(character.x, character.y, 'dude');
 4           player.anchor.setTo(0, 1);
-
-5           game.physics.enable(player, Phaser.Physics.ARCADE);
-
-5           player.body.bounce.y = 0.0;
-5           player.body.collideWorldBounds = true;
-5           player.body.setSize(20, 32, 5, 16);
-
 5           player.animations.add('left', [0, 1, 2, 3], 10, true);
 5           player.animations.add('turn', [4], 20, true);
 5           player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+6           game.physics.enable(player, Phaser.Physics.ARCADE);
+6           player.body.bounce.y = 0.0;
+6           player.body.collideWorldBounds = true;
+6           player.body.setSize(20, 32, 5, 16);
 
 4           game.camera.follow(player);
 4       }
@@ -208,12 +206,13 @@
 4       function createEnemy(character) {
 4           let enemy = enemies.create(character.x, character.y, 'droid');
 5           enemy.data = character.properties;
-5           game.physics.enable(enemy, Phaser.Physics.ARCADE);
-5           enemy.body.collideWorldBounds = true;
 4           enemy.anchor.setTo(0.5, 1);
-5           enemy.body.setSize(22, 20, 5, 14);
-
 5           enemy.animations.add('move', [0, 1, 2, 3], 10, true);
+
+6           game.physics.enable(enemy, Phaser.Physics.ARCADE);
+6           enemy.body.collideWorldBounds = true;
+6           enemy.body.setSize(22, 20, 5, 14);
+
 4       }
 
 8       function handlePlayerHitEnemy(player, enemy) {
@@ -234,7 +233,7 @@
 8           deathTween.start();
 
 8           player.body.velocity.y = -300; // bounce player
-8           sounds.enemyDeath.play();
+9           sounds.enemyDeath.play();
 8       }
 
 8       function killPlayer() {
@@ -244,7 +243,7 @@
 8           player.body.velocity.y = -500; // go up
 8           player.scale.y = -1;
 8           player.anchor.setTo(0, 0.5);
-8           sounds.playerDeath.play();
+9           sounds.playerDeath.play();
 
 8           // restart the game after a short delay
 8           game.time.events.add(3 * Phaser.Timer.SECOND, () => game.state.start('default'), game);
