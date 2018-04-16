@@ -67,7 +67,7 @@ function create() {
 
     map.addTilesetImage('map-tiles');
 
-    map.setCollisionByExclusion([]);
+    // map.setCollisionByExclusion([]);
 
     layer = map.createLayer('platforms');
 
@@ -88,8 +88,8 @@ function create() {
 }
 
 function update() {
-    game.physics.arcade.collide(player, layer, null, () => !player.data.dying);
-    game.physics.arcade.collide(enemies, layer);
+    // game.physics.arcade.collide(player, layer, null, () => !player.data.dying);
+    // game.physics.arcade.collide(enemies, layer);
     game.physics.arcade.collide(player, enemies, handlePlayerHitEnemy);
 
     player.body.velocity.x = 0;
@@ -207,12 +207,13 @@ function createPlayer(character) {
 function createEnemy(character) {
     let enemy = enemies.create(character.x, character.y, 'droid');
     enemy.data = character.properties;
-    game.physics.enable(enemy, Phaser.Physics.ARCADE);
-    enemy.body.collideWorldBounds = true;
     enemy.anchor.setTo(0.5, 1);
-    enemy.body.setSize(22, 20, 5, 14);
 
     enemy.animations.add('move', [0, 1, 2, 3], 10, true);
+
+    game.physics.enable(enemy, Phaser.Physics.ARCADE);
+    enemy.body.collideWorldBounds = true;
+    enemy.body.setSize(22, 20, 5, 14);
 }
 
 function handlePlayerHitEnemy(player, enemy) {
