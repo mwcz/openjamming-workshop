@@ -1,4 +1,4 @@
-let game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
+let game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
     preload: preload,
     create: create,
     update: update,

@@ -1,8 +1,7 @@
-let game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
+let game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
     preload: preload,
     create: create,
     update: update,
-    render: render
 });
 
 function preload() {
@@ -102,15 +101,6 @@ function update() {
         player.body.velocity.y = -550;
         jumpTimer = game.time.now + 100;
     }
-}
-
-function render () {
-
-    // game.debug.text(game.time.physicsElapsed, 32, 32);
-    // game.debug.body(player);
-    // enemies.forEach(enemy => game.debug.body(enemy));
-    // game.debug.bodyInfo(player, 16, 24);
-
 }
 
 function initializeCharacters(map) {
