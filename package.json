@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "npm run serve",
-    "serve": "./node_modules/.bin/browser-sync start --startPath src --index **/index.html --server --serveStatic src/ --files 'src/**/*' --directory",
+    "serve": "./node_modules/.bin/browser-sync start --startPath labs --index **/index.html --server --serveStatic labs/ --files 'labs/**/*' --directory",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
