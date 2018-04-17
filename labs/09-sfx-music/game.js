@@ -6,28 +6,28 @@ let game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
 
 function preload() {
 
-    game.load.tilemap('level', 'assets/levels/level.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('map-tiles', 'assets/images/map-tiles.png');
-    game.load.image('background', 'assets/images/background.png');
-    game.load.spritesheet('dude', 'assets/images/dude.png', 32, 48);
-    game.load.spritesheet('droid', 'assets/images/droid.png', 32, 32);
+    game.load.tilemap('level', '../assets/levels/level.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.image('map-tiles', '../assets/images/map-tiles.png');
+    game.load.image('background', '../assets/images/background.png');
+    game.load.spritesheet('dude', '../assets/images/dude.png', 32, 48);
+    game.load.spritesheet('droid', '../assets/images/droid.png', 32, 32);
 
     // load audio files
 
     // https://www.beepbox.co/#5n31s0k4l00e00t9m2a2g00j7i0r1w1121f0000d1101c0000h0000v0000o3210b4h0p1g002Dp0Vc19Ey8100
-    // game.load.audio('jump', 'assets/audio/sfx/jump.wav');
+    // game.load.audio('jump', '../assets/audio/sfx/jump.wav');
 
     // https://www.beepbox.co/#5n31s0kbl00e00t7m0a2g00j0i0r1w1111f0000d1112c0000h0000v0000o3210bYp1554h0G
-    // game.load.audio('land', 'assets/audio/sfx/land.wav');
+    // game.load.audio('land', '../assets/audio/sfx/land.wav');
 
     // https://www.beepbox.co/#5n11s0k4l00e00t7m0a2g00j0i0r1w11f00d13c00h00v03o30bMp16kg0aiE
-    // game.load.audio('walk', 'assets/audio/sfx/walk.wav');
+    // game.load.audio('walk', '../assets/audio/sfx/walk.wav');
 
     // https://www.beepbox.co/#5n31s0k4l00e00t7m0a2g00j0i0r1w1181f0000d1111c0000h0000v0000o3210bYp1dIYOGwqCf5IBuc
-    // game.load.audio('player-death', 'assets/audio/sfx/player-death.wav');
+    // game.load.audio('player-death', '../assets/audio/sfx/player-death.wav');
 
     // https://www.beepbox.co/#5n31s0k4l00e00t7m0a2g00j0i0r1w1181f0000d1111c0000h0000v0000o3210bYp165A81pk
-    // game.load.audio('enemy-death', 'assets/audio/sfx/enemy-death.wav');
+    // game.load.audio('enemy-death', '../assets/audio/sfx/enemy-death.wav');
 
 }
 

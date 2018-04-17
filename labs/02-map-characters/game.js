@@ -6,8 +6,8 @@ let game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
 
 function preload() {
 
-    game.load.image('background', 'assets/images/background.png');
-    game.load.spritesheet('dude', 'assets/images/dude.png', 32, 48);
+    game.load.image('background', '../assets/images/background.png');
+    game.load.spritesheet('dude', '../assets/images/dude.png', 32, 48);
 
 }
 
